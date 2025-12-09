@@ -5,24 +5,19 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SellerController;
 use App\Http\Controllers\SellerOrderController;
 use App\Http\Controllers\SellerProductController;
+use App\Http\Controllers\WelcomeController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
+Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+    
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -30,6 +25,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/my-order', function () {
         return "Halaman My Order (Belum dibuat)";
     })->name('my-order');
+
+    Route::get('/join-seller', [SellerController::class, 'showJoinPage'])->name('join-seller');
+    Route::post('/join-seller', [SellerController::class, 'registerStore'])->name('join-seller.store');
 
     Route::middleware('role:seller')->prefix('seller')->name('seller.')->group(function () {
         Route::get('/dashboard', [SellerController::class, 'dashboard'])->name('dashboard');
@@ -54,6 +52,7 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+        
         Route::get('/stores', [AdminController::class, 'stores'])->name('stores');
         Route::patch('/stores/{id}/approve', [AdminController::class, 'approveStore'])->name('stores.approve');
         Route::delete('/stores/{id}/reject', [AdminController::class, 'rejectStore'])->name('stores.reject');

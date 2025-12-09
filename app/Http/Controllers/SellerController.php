@@ -10,6 +10,8 @@ use App\Models\WithDrawal;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class SellerController extends Controller
 {
@@ -25,16 +27,13 @@ class SellerController extends Controller
             ]);
         }
 
-        // --- HITUNG DATA REAL ---
         $totalProducts = Product::where('store_id', $store->id)->count();
         
-        // Pesanan Baru (Paid tapi belum ada resi)
         $pendingOrders = Transaction::where('store_id', $store->id)
             ->where('payment_status', 'paid')
             ->whereNull('tracking_number')
             ->count();
 
-        // Total Penjualan (Semua yang sudah paid)
         $totalSales = Transaction::where('store_id', $store->id)
             ->where('payment_status', 'paid')
             ->sum('grand_total');
@@ -44,9 +43,56 @@ class SellerController extends Controller
             'stats' => [
                 'total_products' => $totalProducts,
                 'pending_orders' => $pendingOrders,
-                'total_sales' => number_format($totalSales, 0, ',', '.'), // Format angka biar rapi
+                'total_sales' => number_format($totalSales, 0, ',', '.'),
             ]
         ]);
+    }
+
+    public function showJoinPage()
+    {
+        $user = Auth::user();
+
+        if ($user->role === 'seller') return redirect()->route('seller.dashboard');
+        if ($user->role === 'admin') return redirect()->route('admin.dashboard');
+
+        $store = Store::where('user_id', $user->id)->first();
+        if ($store) return redirect()->route('seller.dashboard');
+
+        return Inertia::render('JoinSeller');
+    }
+
+    public function registerStore(Request $request)
+    {
+        $user = Auth::user();
+
+        $request->validate([
+            'name' => 'required|string|max:255|unique:stores,name',
+            'phone' => 'required|string|max:20',
+            'address' => 'required|string',
+            'city' => 'required|string',
+            'postal_code' => 'required|string',
+            'about' => 'nullable|string',
+        ]);
+
+        DB::transaction(function () use ($request, $user) {
+            Store::create([
+                'user_id' => $user->id,
+                'name' => $request->name,
+                'slug' => Str::slug($request->name),
+                'phone' => $request->phone,
+                'address' => $request->address,
+                'address_id' => 'ADDR-' . time() . '-' . $user->id,
+                'city' => $request->city,
+                'postal_code' => $request->postal_code,
+                'about' => $request->about,
+                'logo' => 'default.png', // <-- PERBAIKAN: Isi default logo biar gak error 1364
+                'is_verified' => false,
+            ]);
+
+            $user->update(['role' => 'seller']);
+        });
+
+        return redirect()->route('seller.dashboard')->with('success', 'Pendaftaran berhasil! Tunggu verifikasi admin.');
     }
 
     public function editStore()
@@ -93,6 +139,7 @@ class SellerController extends Controller
 
         if (!$store->exists) {
             $store->is_verified = false;
+            $store->logo = 'default.png'; // Jaga-jaga kalau update pertama kali
         }
 
         $store->save();
