@@ -19,12 +19,15 @@ class SellerController extends Controller
     {
         $user = Auth::user();
         $store = Store::where('user_id', $user->id)->first();
-
         if (!$store) {
              return Inertia::render('Seller/Dashboard', [
                 'store' => null,
                 'stats' => null
             ]);
+        }
+
+        if (!$store->is_verified) {
+            return Inertia::render('Seller/PendingVerification');
         }
 
         $totalProducts = Product::where('store_id', $store->id)->count();

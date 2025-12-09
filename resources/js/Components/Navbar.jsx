@@ -73,8 +73,20 @@ export default function Navbar() {
     };
 
     let currentMenus = menus["guest"];
+
     if (user) {
-        const roleKey = user.role === "user" ? "member" : user.role;
+        let roleKey = user.role;
+
+        // --- LOGIKA BARU DISINI ---
+        // Jika Seller TAPI belum Verified -> Anggap sebagai Member (biar bisa belanja)
+        if (roleKey === "seller" && !user.store_verified) {
+            roleKey = "member";
+        }
+        // Jika user biasa (kadang database tulis 'user' bukan 'member') -> mapping ke 'member'
+        if (roleKey === "user") {
+            roleKey = "member";
+        }
+
         if (menus[roleKey]) {
             currentMenus = menus[roleKey];
         }
@@ -84,7 +96,7 @@ export default function Navbar() {
         <nav className="bg-[#173B1A] sticky top-0 z-50 shadow-md font-sans border-b border-[#2C5E31]">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between h-20 items-center">
-                    {/* 1. BAGIAN KIRI: LOGO */}
+                    {/* LOGO */}
                     <div className="flex-shrink-0 flex items-center">
                         <Link
                             href="/"
@@ -95,9 +107,9 @@ export default function Navbar() {
                         </Link>
                     </div>
 
-                    {/* 2. BAGIAN KANAN: GROUP MENU + PROFILE (Biar nempel ke kanan semua) */}
+                    {/* GROUP KANAN: MENU + PROFILE */}
                     <div className="hidden md:flex items-center gap-8">
-                        {/* A. Menu Items */}
+                        {/* MENU ITEMS */}
                         <div className="flex space-x-8">
                             {currentMenus.map((item, index) => {
                                 const isActive =
@@ -140,16 +152,13 @@ export default function Navbar() {
                             })}
                         </div>
 
-                        {/* B. Profile Viewer (Dipisah garis tipis) */}
+                        {/* PROFILE VIEWER */}
                         <div className="flex items-center">
                             {user ? (
                                 <div className="flex items-center ml-2 gap-3 pl-6 border-l border-white/10">
-                                    {/* Lingkaran Inisial */}
                                     <div className="h-10 w-10 rounded-full bg-[#3E2723] border-2 border-white flex items-center justify-center text-white font-bold font-poppins shadow-md">
                                         {user.name.charAt(0).toUpperCase()}
                                     </div>
-
-                                    {/* Nama & Logout */}
                                     <div className="flex flex-col items-start leading-tight">
                                         <span className="text-white font-bold text-sm truncate max-w-[150px]">
                                             {user.name}
@@ -201,7 +210,7 @@ export default function Navbar() {
                 </div>
             </div>
 
-            {/* Mobile Menu Dropdown (Tetap sama) */}
+            {/* Mobile Menu Dropdown */}
             {isMobileMenuOpen && (
                 <div className="md:hidden bg-[#1A1A1A] border-t border-[#2C5E31] py-4">
                     <div className="space-y-1 px-4">
