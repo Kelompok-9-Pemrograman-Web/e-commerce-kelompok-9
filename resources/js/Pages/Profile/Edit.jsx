@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import MainLayout from "@/Layouts/MainLayout"; // Ganti AuthenticatedLayout jadi MainLayout
+import MainLayout from "@/Layouts/MainLayout";
 import { Head, Link, usePage } from "@inertiajs/react";
 import UpdateProfileInformationForm from "./Partials/UpdateProfileInformationForm";
 import UpdatePasswordForm from "./Partials/UpdatePasswordForm";
@@ -10,14 +10,11 @@ export default function Edit({ mustVerifyEmail, status }) {
     const [activeTab, setActiveTab] = useState("profile");
 
     return (
-        // Ganti Wrapper jadi MainLayout
         <MainLayout title="Pengaturan Akun">
             <Head title="Pengaturan Akun" />
 
-            {/* Content Wrapper */}
             <div className="py-12 bg-[#F9FBF9] min-h-screen">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-                    {/* Custom Header FreshMart - Pengganti Header Bawaan */}
                     <div className="flex items-center gap-4 mb-8 px-4 sm:px-0">
                         <div className="p-3 bg-[#173B1A] rounded-2xl shadow-lg">
                             <User className="w-8 h-8 text-[#93FF00]" />
@@ -33,7 +30,6 @@ export default function Edit({ mustVerifyEmail, status }) {
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                        {/* Sidebar Menu */}
                         <div className="lg:col-span-3">
                             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden sticky top-24">
                                 <div className="p-6 text-center border-b border-gray-50">
@@ -91,7 +87,6 @@ export default function Edit({ mustVerifyEmail, status }) {
                             </div>
                         </div>
 
-                        {/* Content Forms */}
                         <div className="lg:col-span-9 space-y-6">
                             {activeTab === "profile" && (
                                 <div className="bg-white p-4 sm:p-8 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden">

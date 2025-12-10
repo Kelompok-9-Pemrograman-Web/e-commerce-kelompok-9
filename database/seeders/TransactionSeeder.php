@@ -19,7 +19,6 @@ class TransactionSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. SIAPKAN USER (Seller & Buyer)
         $sellerUser = User::where('role', 'seller')->first();
         $buyerUser = User::where('role', 'member')->first();
 
@@ -28,13 +27,11 @@ class TransactionSeeder extends Seeder
             return;
         }
 
-        // 2. SIAPKAN DATA BUYER
         $buyer = Buyer::firstOrCreate(
             ['user_id' => $buyerUser->id],
             ['phone_number' => '08123456789']
         );
 
-        // 3. SIAPKAN TOKO SELLER
         $store = Store::firstOrCreate(
             ['user_id' => $sellerUser->id],
             [
@@ -50,13 +47,11 @@ class TransactionSeeder extends Seeder
             ]
         );
 
-        // 4. SIAPKAN SALDO TOKO
         $balanceWallet = StoreBalance::firstOrCreate(
             ['store_id' => $store->id],
             ['balance' => 0]
         );
 
-        // 5. SIAPKAN 4 KATEGORI UTAMA (Sesuai Request)
         $categoriesData = [
             [
                 'name' => 'Fresh Fruit',
@@ -92,12 +87,9 @@ class TransactionSeeder extends Seeder
             );
         }
 
-        // 6. BUAT PRODUK DUMMY (Jika Kosong)
-        // Kita cek per kategori, kalau belum ada produk di kategori itu, kita buatin.
         foreach ($categoriesData as $index => $catData) {
             $category = ProductCategory::where('slug', $catData['slug'])->first();
             
-            // Cek apakah toko ini udah punya produk di kategori ini?
             $existingProduct = Product::where('store_id', $store->id)
                 ->where('product_category_id', $category->id)
                 ->first();
@@ -112,21 +104,19 @@ class TransactionSeeder extends Seeder
                     'slug' => Str::slug($prodName) . '-' . Str::random(5),
                     'description' => 'Produk segar berkualitas tinggi dari kategori ' . $catData['name'],
                     'condition' => 'new',
-                    'price' => ($index + 1) * 15000, // Harga variatif: 15k, 30k, 45k, 60k
+                    'price' => ($index + 1) * 15000,
                     'weight' => 500,
                     'stock' => 50,
                 ]);
 
-                // Gambar Dummy (Pastikan file ini ada atau biarkan placeholder)
                 ProductImage::create([
                     'product_id' => $product->id,
-                    'image' => 'products/dummy.jpg', // Nanti ganti kalau mau real
+                    'image' => 'products/dummy.jpg',
                     'is_thumbnail' => true
                 ]);
             }
         }
 
-        // Ambil semua produk yang baru dibuat/sudah ada
         $products = Product::where('store_id', $store->id)->get();
 
         if ($products->isEmpty()) {
@@ -134,7 +124,6 @@ class TransactionSeeder extends Seeder
             return;
         }
 
-        // 7. BUAT 5 TRANSAKSI DUMMY
         $this->command->info('Membuat 5 Transaksi Dummy...');
         
         for ($i = 1; $i <= 5; $i++) {
@@ -143,7 +132,6 @@ class TransactionSeeder extends Seeder
             $tax = 1500;
             $subtotal = 0;
             
-            // Ambil 2 produk acak untuk tiap transaksi
             $selectedProducts = $products->random(min(2, $products->count()));
 
             foreach ($selectedProducts as $product) {
@@ -152,7 +140,6 @@ class TransactionSeeder extends Seeder
             
             $grandTotal = $subtotal + $shippingCost + $tax;
 
-            // A. Header Transaksi
             $transaction = Transaction::create([
                 'code' => 'TRX-' . strtoupper(Str::random(8)),
                 'buyer_id' => $buyer->id,
@@ -164,14 +151,13 @@ class TransactionSeeder extends Seeder
                 'shipping' => 'JNE',           
                 'shipping_type' => 'REG',  
                 'shipping_cost' => $shippingCost,
-                'tracking_number' => $i % 2 == 0 ? 'JN' . Str::random(10) : null, // Genap dikirim, Ganjil proses
+                'tracking_number' => $i % 2 == 0 ? 'JN' . Str::random(10) : null,
                 'tax' => $tax,
                 'grand_total' => $grandTotal,
-                'payment_status' => 'paid', // Uang masuk
+                'payment_status' => 'paid',
                 'created_at' => now()->subDays($i),
             ]);
 
-            // B. Detail Transaksi
             foreach ($selectedProducts as $product) {
                 TransactionDetail::create([
                     'transaction_id' => $transaction->id,
@@ -181,7 +167,6 @@ class TransactionSeeder extends Seeder
                 ]);
             }
 
-            // C. UPDATE SALDO SELLER (INCOME)
             $balanceWallet->increment('balance', $grandTotal);
 
             StoreBalanceHistory::create([

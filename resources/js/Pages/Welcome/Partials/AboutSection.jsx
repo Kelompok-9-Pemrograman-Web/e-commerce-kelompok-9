@@ -8,13 +8,11 @@ export default function AboutSection() {
             id="about"
             className="py-24 bg-[#F9FBF9] relative overflow-hidden"
         >
-            {/* Background Decorations */}
             <div className="absolute top-0 left-0 w-64 h-64 bg-[#93FF00] rounded-full mix-blend-multiply filter blur-3xl opacity-10 -translate-x-1/2 -translate-y-1/2"></div>
             <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#173B1A] rounded-full mix-blend-multiply filter blur-3xl opacity-5 translate-x-1/3 translate-y-1/3"></div>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                    {/* Left Column: Images */}
                     <div className="relative">
                         <div className="relative rounded-3xl overflow-hidden shadow-2xl border-[8px] border-white transform -rotate-2 hover:rotate-0 transition-transform duration-500">
                             <img
@@ -23,7 +21,6 @@ export default function AboutSection() {
                                 className="w-full h-[500px] object-cover"
                             />
 
-                            {/* Overlay Gradient */}
                             <div className="absolute inset-0 bg-gradient-to-t from-[#173B1A]/60 to-transparent"></div>
 
                             <div className="absolute bottom-8 left-8 text-white">
@@ -36,7 +33,6 @@ export default function AboutSection() {
                             </div>
                         </div>
 
-                        {/* Floating Badge */}
                         <div className="absolute -bottom-6 -right-6 md:right-8 bg-white p-6 rounded-2xl shadow-xl border border-gray-100 hidden md:block animate-bounce-slow">
                             <div className="flex items-center gap-4">
                                 <div className="bg-[#e9ffcc] p-3 rounded-full">
@@ -54,7 +50,6 @@ export default function AboutSection() {
                         </div>
                     </div>
 
-                    {/* Right Column: Content */}
                     <div className="space-y-8">
                         <div>
                             <span className="inline-block py-2 px-4 rounded-full bg-[#173B1A]/10 text-[#173B1A] text-sm font-bold tracking-wide uppercase mb-4">
@@ -110,7 +105,6 @@ export default function AboutSection() {
                         </div>
 
                         <div className="pt-4">
-                            {/* UPDATE: Mengarah ke route products.list */}
                             <Link
                                 href={route("products.list")}
                                 className="inline-flex items-center justify-center px-8 py-4 text-base font-bold text-[#173B1A] transition-all duration-200 bg-[#93FF00] border border-transparent rounded-full hover:bg-[#173B1A] hover:text-[#93FF00] shadow-lg hover:shadow-xl transform hover:-translate-y-1"

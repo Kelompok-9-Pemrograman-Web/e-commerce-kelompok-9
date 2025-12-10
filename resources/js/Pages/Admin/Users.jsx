@@ -4,22 +4,18 @@ import { Head, Link, router, useForm } from "@inertiajs/react";
 import { Search, User, Trash2, Edit, X, Save } from "lucide-react";
 
 export default function Users({ users, filters }) {
-    // State Filter
     const [searchTerm, setSearchTerm] = useState(filters?.search || "");
     const currentRole = filters?.role || "all";
 
-    // State Modal Edit
     const [isEditOpen, setIsEditOpen] = useState(false);
     const [editingUser, setEditingUser] = useState(null);
 
-    // Form Helper dari Inertia (untuk Edit)
     const { data, setData, put, processing, reset, errors } = useForm({
         name: "",
         email: "",
         role: "user",
     });
 
-    // Format Tanggal
     const formatDate = (dateString) => {
         return new Date(dateString).toLocaleDateString("id-ID", {
             day: "numeric",
@@ -28,9 +24,7 @@ export default function Users({ users, filters }) {
         });
     };
 
-    // --- ACTIONS ---
 
-    // 1. Search
     const handleSearch = (e) => {
         if (e.key === "Enter") {
             router.get(
@@ -41,7 +35,6 @@ export default function Users({ users, filters }) {
         }
     };
 
-    // 2. Filter Role
     const handleFilterChange = (role) => {
         const roleParam = role === "all" ? "" : role;
         router.get(
@@ -51,7 +44,6 @@ export default function Users({ users, filters }) {
         );
     };
 
-    // 3. Delete User
     const handleDelete = (id, name) => {
         if (
             confirm(`Yakin ingin menghapus user "${name}"? Aksi ini permanen.`)
@@ -62,7 +54,6 @@ export default function Users({ users, filters }) {
         }
     };
 
-    // 4. Open Edit Modal
     const openEditModal = (user) => {
         setEditingUser(user);
         setData({
@@ -73,7 +64,6 @@ export default function Users({ users, filters }) {
         setIsEditOpen(true);
     };
 
-    // 5. Submit Edit
     const handleUpdate = (e) => {
         e.preventDefault();
         put(route("admin.users.update", editingUser.id), {
@@ -89,9 +79,7 @@ export default function Users({ users, filters }) {
         <AdminLayout title="Kelola Pengguna">
             <Head title="Kelola Pengguna" />
 
-            {/* Toolbar */}
             <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-                {/* Search Bar */}
                 <div className="relative w-full md:w-96">
                     <div
                         className="absolute inset-y-0 left-0 flex items-center pointer-events-none z-10"
@@ -110,7 +98,6 @@ export default function Users({ users, filters }) {
                     />
                 </div>
 
-                {/* Filter */}
                 <div className="flex bg-gray-200 p-1 rounded-lg h-10 items-center">
                     <button
                         onClick={() => handleFilterChange("all")}
@@ -145,7 +132,6 @@ export default function Users({ users, filters }) {
                 </div>
             </div>
 
-            {/* Tabel */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left">
@@ -186,7 +172,7 @@ export default function Users({ users, filters }) {
                                                 <span className="px-3 py-1 rounded-full text-xs font-bold bg-purple-100 text-purple-700 border border-purple-200">
                                                     Seller
                                                 </span>
-                                            ) : user.role === "member" ? ( // <--- CEK 'member', BUKAN 'user'
+                                            ) : user.role === "member" ? ( 
                                                 <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-700 border border-blue-200">
                                                     Buyer
                                                 </span>
@@ -201,7 +187,6 @@ export default function Users({ users, filters }) {
                                         </td>
                                         <td className="px-6 py-4 text-center">
                                             <div className="flex items-center justify-center gap-2">
-                                                {/* Tombol Edit */}
                                                 <button
                                                     onClick={() =>
                                                         openEditModal(user)
@@ -212,7 +197,6 @@ export default function Users({ users, filters }) {
                                                     <Edit className="w-4 h-4" />
                                                 </button>
 
-                                                {/* Tombol Delete */}
                                                 <button
                                                     onClick={() =>
                                                         handleDelete(
@@ -250,7 +234,6 @@ export default function Users({ users, filters }) {
                     </table>
                 </div>
 
-                {/* Pagination */}
                 <div className="p-4 border-t border-gray-100 flex justify-between items-center text-sm text-gray-500">
                     Showing {users.from ?? 0} to {users.to ?? 0} of{" "}
                     {users.total ?? 0} entries
@@ -284,12 +267,9 @@ export default function Users({ users, filters }) {
                 </div>
             </div>
 
-            {/* --- MODAL EDIT USER --- */}
             {isEditOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-                    {/* DISINI KUNCINYA: max-w-lg (Lebar proporsional) */}
                     <div className="bg-white rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden transform transition-all">
-                        {/* Header Modal */}
                         <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
                             <h3 className="font-bold text-lg text-[#1A1A1A]">
                                 Edit Pengguna
@@ -302,7 +282,6 @@ export default function Users({ users, filters }) {
                             </button>
                         </div>
 
-                        {/* Form Edit */}
                         <form onSubmit={handleUpdate} className="p-6 flex flex-col gap-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">

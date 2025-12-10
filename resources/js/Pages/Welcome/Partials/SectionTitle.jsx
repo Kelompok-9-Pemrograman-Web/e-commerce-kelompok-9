@@ -1,6 +1,5 @@
 import React from "react";
 
-// PASTIKAN ADA 'export default' DI DEPAN FUNCTION
 export default function SectionTitle({ title }) {
     return (
         <div className="text-center mb-10">

@@ -4,7 +4,6 @@ import { Head, useForm, usePage } from "@inertiajs/react";
 import { Store, Upload, Save, MapPin, Phone, FileText } from "lucide-react";
 
 export default function StoreProfile({ store }) {
-    // Helper untuk preview gambar awal (kalau ada di DB)
     const initialLogo = store?.logo ? `/storage/${store.logo}` : null;
     const [logoPreview, setLogoPreview] = useState(initialLogo);
 
@@ -18,12 +17,11 @@ export default function StoreProfile({ store }) {
         logo: null,
     });
 
-    // Handle Image Upload Change
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
             setData("logo", file);
-            setLogoPreview(URL.createObjectURL(file)); // Buat preview lokal
+            setLogoPreview(URL.createObjectURL(file));
         }
     };
 
@@ -40,7 +38,6 @@ export default function StoreProfile({ store }) {
                 onSubmit={submit}
                 className="grid grid-cols-1 lg:grid-cols-3 gap-8"
             >
-                {/* KOLOM KIRI: INFO UTAMA & LOGO */}
                 <div className="lg:col-span-1 space-y-6">
                     <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                         <h3 className="font-bold text-[#1A1A1A] mb-4 flex items-center gap-2">
@@ -48,7 +45,6 @@ export default function StoreProfile({ store }) {
                             Identitas Toko
                         </h3>
 
-                        {/* Logo Upload */}
                         <div className="mb-6 text-center">
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                 Logo Toko
@@ -80,7 +76,6 @@ export default function StoreProfile({ store }) {
                             )}
                         </div>
 
-                        {/* Nama Toko */}
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-gray-700 mb-1">
                                 Nama Toko
@@ -101,7 +96,6 @@ export default function StoreProfile({ store }) {
                             )}
                         </div>
 
-                        {/* Deskripsi Singkat */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
                                 <FileText className="w-3 h-3" /> Deskripsi
@@ -125,7 +119,6 @@ export default function StoreProfile({ store }) {
                     </div>
                 </div>
 
-                {/* KOLOM KANAN: ALAMAT & KONTAK */}
                 <div className="lg:col-span-2 space-y-6">
                     <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                         <h3 className="font-bold text-[#1A1A1A] mb-4 flex items-center gap-2">
@@ -134,7 +127,6 @@ export default function StoreProfile({ store }) {
                         </h3>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {/* No HP */}
                             <div className="md:col-span-2">
                                 <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
                                     <Phone className="w-3 h-3" /> Nomor Telepon
@@ -156,7 +148,6 @@ export default function StoreProfile({ store }) {
                                 )}
                             </div>
 
-                            {/* Alamat Lengkap */}
                             <div className="md:col-span-2">
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
                                     Alamat Lengkap
@@ -177,7 +168,6 @@ export default function StoreProfile({ store }) {
                                 )}
                             </div>
 
-                            {/* Kota */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
                                     Kota / Kabupaten
@@ -198,7 +188,6 @@ export default function StoreProfile({ store }) {
                                 )}
                             </div>
 
-                            {/* Kode Pos */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
                                     Kode Pos
@@ -221,18 +210,13 @@ export default function StoreProfile({ store }) {
                         </div>
                     </div>
 
-                    {/* ACTION BUTTON */}
                     <div className="flex justify-end mt-6 pb-6">
                         {" "}
-                        {/* Tambah mt-6 dan pb-6 buat ruang nafas */}
                         <button
                             type="submit"
                             disabled={processing}
-                            // Ubah padding: px-8 py-3 -> px-6 py-2.5
-                            // Tambah text-sm biar font gak kegedean
                             className="px-6 py-2.5 bg-[#00B207] text-white rounded-full font-bold text-sm hover:bg-green-700 transition shadow-md hover:shadow-lg shadow-green-100 flex items-center gap-2"
                         >
-                            {/* Icon diperkecil dikit jadi w-4 h-4 */}
                             <Save className="w-4 h-4" />
                             {processing ? "Menyimpan..." : "Simpan Profil Toko"}
                         </button>

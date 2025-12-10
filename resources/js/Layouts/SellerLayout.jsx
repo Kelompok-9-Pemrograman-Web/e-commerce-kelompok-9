@@ -16,7 +16,6 @@ export default function SellerLayout({ children, title }) {
     const { auth } = usePage().props;
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
-    // Menu Seller
     const navigation = [
         {
             name: "Dashboard",
@@ -29,13 +28,13 @@ export default function SellerLayout({ children, title }) {
             href: route("seller.products.index"),
             routeName: "seller.products",
             icon: Package,
-        }, // Nanti kita buat rute ini
+        },
         {
             name: "Pesanan",
             href: route("seller.orders.index"),
             routeName: "seller.orders",
             icon: ShoppingBag,
-        }, // Nanti kita buat rute ini
+        },
         {
             name: "Profil Toko",
             href: route("seller.store"),
@@ -54,13 +53,11 @@ export default function SellerLayout({ children, title }) {
 
     return (
         <div className="min-h-screen bg-[#F8F9FA] font-sans flex text-[#1A1A1A]">
-            {/* SIDEBAR (Putih Bersih dengan Aksen Hijau) */}
             <aside
                 className={`fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-100 transition-transform duration-300 transform ${
                     sidebarOpen ? "translate-x-0" : "-translate-x-full"
                 } lg:translate-x-0 lg:static lg:inset-0 flex flex-col shadow-sm`}
             >
-                {/* Header */}
                 <div className="flex items-center justify-center h-20 border-b border-gray-50">
                     <Link
                         href="/"
@@ -75,10 +72,8 @@ export default function SellerLayout({ children, title }) {
                     </Link>
                 </div>
 
-                {/* Menu */}
                 <nav className="flex-1 mt-6 px-4 space-y-2 overflow-y-auto">
                     {navigation.map((item) => {
-                        // Cek aktif pakai wildcard *
                         const isActive = route().current(item.routeName + "*");
 
                         return (
@@ -104,7 +99,6 @@ export default function SellerLayout({ children, title }) {
                     })}
                 </nav>
 
-                {/* Profile Bawah */}
                 <div className="p-4 border-t border-gray-50">
                     <div className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 mb-2">
                         <div className="w-9 h-9 rounded-full bg-green-600 flex items-center justify-center text-white font-bold text-sm">
@@ -131,9 +125,7 @@ export default function SellerLayout({ children, title }) {
                 </div>
             </aside>
 
-            {/* MAIN CONTENT */}
             <div className="flex-1 flex flex-col min-w-0 overflow-hidden h-screen">
-                {/* Mobile Header */}
                 <header className="lg:hidden bg-white shadow-sm h-16 flex items-center px-4 justify-between z-40">
                     <span className="font-bold text-lg text-green-700">
                         Seller Center
@@ -158,7 +150,6 @@ export default function SellerLayout({ children, title }) {
                 </main>
             </div>
 
-            {/* Overlay Mobile */}
             {sidebarOpen && (
                 <div
                     className="fixed inset-0 bg-black/20 z-40 lg:hidden backdrop-blur-sm"
