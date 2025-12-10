@@ -48,6 +48,8 @@ Tampilan antarmuka dibuat konsisten, bersih, dan mendukung berbagai resolusi lay
    - Resource (API Resource / View Resource)
    - Struktur file rapi dan mudah di-maintain
 
+## Struktur Database
+![db structure](https://github.com/WisnuIbnu/E-Commerce-pemweb-uap/blob/main/public/db_structure.png?raw=true)
 
 ## Prasyarat
 
@@ -142,23 +144,25 @@ Gunakan template berikut:
 Jelaskan secara singkat apa saja yang telah dikerjakan pada tugas ini.
 
 ## Fitur yang Diimplementasikan
-- [✅] Halaman Homepage
-- [✅] Halaman Produk
-- [✅] Checkout
-- [✅] Riwayat Transaksi (opsional)
-- [✅] Registrasi Toko
-- [✅] Manajemen Pesanan
-- [✅] Saldo Toko
-- [✅] Penarikan Saldo
-- [✅] Manajemen Toko (produk, kategori, gambar)
-- [✅] Verifikasi Toko (Admin)
-- [✅] Manajemen User & Toko (Admin)
+- [ ] Halaman Homepage
+- [ ] Halaman Produk
+- [ ] Checkout
+- [ ] Riwayat Transaksi (opsional)
+- [ ] Registrasi Toko
+- [ ] Manajemen Pesanan
+- [ ] Saldo Toko
+- [ ] Penarikan Saldo
+- [ ] Manajemen Toko (produk, kategori, gambar)
+- [ ] Verifikasi Toko (Admin)
+- [ ] Manajemen User & Toko (Admin)
 
 *(Checklist dihapus atau ditandai sesuai progress kelompok kalian.)*
 
 ## Catatan Tambahan
 Tambahkan hal penting seperti:
-- Kendala waktu dikarenakan anggota yang memiliki kesibukan yang berbeda serta banyaknya tugas yang mengendap sehingga memakan waktu pengerjaan. Namun hal yang menjadi masalah adalah pembuatan video penjelasannya.
+- Fitur yang belum selesai
+- Kendala yang ditemui
+- Hal yang perlu direview khusus
 ```
 
 <h3 align="center">tetap semangat dan sukses selalu php lovers💕</h3>

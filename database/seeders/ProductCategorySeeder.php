@@ -16,7 +16,6 @@ class ProductCategorySeeder extends Seeder
                 'slug' => 'fresh-fruit',
                 'tagline' => 'Buah segar langsung dari kebun',
                 'description' => 'Pilihan buah-buahan organik segar untuk kebutuhan nutrisi harian Anda.',
-                // Sesuai path di public/images/Icon
                 'image' => 'images/Icon/FreshFruit.svg' 
             ],
             [
