@@ -1,14 +1,12 @@
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
-import { Transition } from '@headlessui/react';
-import { Link, useForm, usePage } from '@inertiajs/react';
+import React from "react";
+import { useForm, usePage, Link } from "@inertiajs/react";
+import { Transition } from "@headlessui/react";
+import { CheckCircle2 } from "lucide-react";
 
-export default function UpdateProfileInformation({
+export default function UpdateProfileInformationForm({
     mustVerifyEmail,
     status,
-    className = '',
+    className = "",
 }) {
     const user = usePage().props.auth.user;
 
@@ -20,80 +18,89 @@ export default function UpdateProfileInformation({
 
     const submit = (e) => {
         e.preventDefault();
-
-        patch(route('profile.update'));
+        patch(route("profile.update"));
     };
 
     return (
         <section className={className}>
-            <header>
-                <h2 className="text-lg font-medium text-gray-900">
-                    Profile Information
-                </h2>
-
-                <p className="mt-1 text-sm text-gray-600">
-                    Update your account's profile information and email address.
-                </p>
-            </header>
-
-            <form onSubmit={submit} className="mt-6 space-y-6">
+            <form onSubmit={submit} className="space-y-6">
                 <div>
-                    <InputLabel htmlFor="name" value="Name" />
-
-                    <TextInput
+                    <label
+                        htmlFor="name"
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                    >
+                        Nama Lengkap
+                    </label>
+                    <input
                         id="name"
-                        className="mt-1 block w-full"
+                        className="w-full rounded-xl border-gray-300 focus:border-[#93FF00] focus:ring-[#93FF00] shadow-sm transition-colors py-2.5 px-4"
                         value={data.name}
-                        onChange={(e) => setData('name', e.target.value)}
+                        onChange={(e) => setData("name", e.target.value)}
                         required
-                        isFocused
                         autoComplete="name"
                     />
-
-                    <InputError className="mt-2" message={errors.name} />
+                    {errors.name && (
+                        <p className="mt-1 text-sm text-red-600">
+                            {errors.name}
+                        </p>
+                    )}
                 </div>
 
                 <div>
-                    <InputLabel htmlFor="email" value="Email" />
-
-                    <TextInput
+                    <label
+                        htmlFor="email"
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                    >
+                        Email
+                    </label>
+                    <input
                         id="email"
                         type="email"
-                        className="mt-1 block w-full"
+                        className="w-full rounded-xl border-gray-300 focus:border-[#93FF00] focus:ring-[#93FF00] shadow-sm transition-colors py-2.5 px-4"
                         value={data.email}
-                        onChange={(e) => setData('email', e.target.value)}
+                        onChange={(e) => setData("email", e.target.value)}
                         required
                         autoComplete="username"
                     />
+                    {errors.email && (
+                        <p className="mt-1 text-sm text-red-600">
+                            {errors.email}
+                        </p>
+                    )}
 
-                    <InputError className="mt-2" message={errors.email} />
+                    {mustVerifyEmail && user.email_verified_at === null && (
+                        <div className="mt-2 bg-orange-50 p-3 rounded-lg border border-orange-100">
+                            <p className="text-sm text-gray-800">
+                                Alamat email Anda belum diverifikasi.
+                                <Link
+                                    href={route("verification.send")}
+                                    method="post"
+                                    as="button"
+                                    className="ml-1 underline text-sm text-orange-600 hover:text-orange-800 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+                                >
+                                    Klik di sini untuk mengirim ulang email
+                                    verifikasi.
+                                </Link>
+                            </p>
+
+                            {status === "verification-link-sent" && (
+                                <div className="mt-2 font-medium text-sm text-green-600">
+                                    Tautan verifikasi baru telah dikirim ke
+                                    alamat email Anda.
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
 
-                {mustVerifyEmail && user.email_verified_at === null && (
-                    <div>
-                        <p className="mt-2 text-sm text-gray-800">
-                            Your email address is unverified.
-                            <Link
-                                href={route('verification.send')}
-                                method="post"
-                                as="button"
-                                className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                            >
-                                Click here to re-send the verification email.
-                            </Link>
-                        </p>
-
-                        {status === 'verification-link-sent' && (
-                            <div className="mt-2 text-sm font-medium text-green-600">
-                                A new verification link has been sent to your
-                                email address.
-                            </div>
-                        )}
-                    </div>
-                )}
-
-                <div className="flex items-center gap-4">
-                    <PrimaryButton disabled={processing}>Save</PrimaryButton>
+                <div className="flex items-center gap-4 pt-2">
+                    <button
+                        type="submit"
+                        disabled={processing}
+                        className="px-6 py-3 bg-[#173B1A] text-white font-bold rounded-full hover:bg-[#1f4d23] hover:shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-[#93FF00] focus:ring-offset-2 disabled:opacity-50"
+                    >
+                        {processing ? "Menyimpan..." : "Simpan Perubahan"}
+                    </button>
 
                     <Transition
                         show={recentlySuccessful}
@@ -102,8 +109,8 @@ export default function UpdateProfileInformation({
                         leave="transition ease-in-out"
                         leaveTo="opacity-0"
                     >
-                        <p className="text-sm text-gray-600">
-                            Saved.
+                        <p className="text-sm text-green-600 flex items-center gap-2">
+                            <CheckCircle2 className="w-4 h-4" /> Tersimpan.
                         </p>
                     </Transition>
                 </div>

@@ -36,7 +36,7 @@ class ProductReviewController extends Controller
         }
 
         $transaction = Transaction::where('buyer_id', $buyer->id)
-            ->where('payment_status', 'paid')
+        ->whereIn('payment_status', ['paid', 'done'])
             ->whereHas('transactionDetails', function ($q) use ($request) {
                 $q->where('product_id', $request->product_id);
             })

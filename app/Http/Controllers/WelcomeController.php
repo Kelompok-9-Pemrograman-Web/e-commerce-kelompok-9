@@ -13,6 +13,8 @@ class WelcomeController extends Controller
     public function index()
     {
         $featuredProducts = Product::with(['productImages', 'store'])
+            ->withAvg('productReviews', 'rating')
+            ->withCount('productReviews')
             ->latest()
             ->take(8)
             ->get();

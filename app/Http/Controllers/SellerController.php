@@ -12,22 +12,31 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class SellerController extends Controller
 {
-    public function dashboard()
+    public function dashboard(Request $request)
     {
         $user = Auth::user();
         $store = Store::where('user_id', $user->id)->first();
+        
         if (!$store) {
              return Inertia::render('Seller/Dashboard', [
                 'store' => null,
-                'stats' => null
+                'stats' => null,
+                'chartData' => [],
+                'currentFilter' => 'month'
             ]);
         }
 
         if (!$store->is_verified) {
-            return Inertia::render('Seller/PendingVerification');
+            return Inertia::render('Seller/Dashboard', [
+                'store' => $store,
+                'stats' => null,
+                'chartData' => [],
+                'currentFilter' => 'month'
+            ]);
         }
 
         $totalProducts = Product::where('store_id', $store->id)->count();
@@ -41,13 +50,101 @@ class SellerController extends Controller
             ->where('payment_status', 'paid')
             ->sum('grand_total');
         
+        $period = $request->input('period', 'month');
+        $chartData = [];
+        
+        $query = Transaction::where('store_id', $store->id)
+                    ->where('payment_status', 'paid');
+
+        switch ($period) {
+            case 'day':
+                $data = $query->whereDate('created_at', Carbon::today())
+                    ->select(
+                        DB::raw('HOUR(created_at) as label'), 
+                        DB::raw('SUM(grand_total) as total')
+                    )
+                    ->groupBy('label')
+                    ->get();
+                
+                for ($i = 0; $i < 24; $i++) {
+                    $found = $data->firstWhere('label', $i);
+                    $chartData[] = [
+                        'name' => sprintf('%02d:00', $i),
+                        'total' => $found ? (int)$found->total : 0
+                    ];
+                }
+                break;
+
+            case 'week':
+                $startDate = Carbon::now()->subDays(6);
+                $data = $query->whereDate('created_at', '>=', $startDate)
+                    ->select(
+                        DB::raw('DATE(created_at) as label'), 
+                        DB::raw('SUM(grand_total) as total')
+                    )
+                    ->groupBy('label')
+                    ->get();
+
+                for ($i = 0; $i <= 6; $i++) {
+                    $date = $startDate->copy()->addDays($i);
+                    $dateString = $date->format('Y-m-d');
+                    $found = $data->firstWhere('label', $dateString);
+                    $chartData[] = [
+                        'name' => $date->isoFormat('dddd'),
+                        'total' => $found ? (int)$found->total : 0
+                    ];
+                }
+                break;
+            
+            case 'year':
+                $data = $query->whereYear('created_at', Carbon::now()->year)
+                    ->select(
+                        DB::raw('MONTH(created_at) as label'), 
+                        DB::raw('SUM(grand_total) as total')
+                    )
+                    ->groupBy('label')
+                    ->get();
+
+                for ($i = 1; $i <= 12; $i++) {
+                    $found = $data->firstWhere('label', $i);
+                    $chartData[] = [
+                        'name' => Carbon::create()->month($i)->isoFormat('MMM'),
+                        'total' => $found ? (int)$found->total : 0
+                    ];
+                }
+                break;
+
+            case 'month':
+            default:
+                $daysInMonth = Carbon::now()->daysInMonth;
+                $data = $query->whereMonth('created_at', Carbon::now()->month)
+                    ->whereYear('created_at', Carbon::now()->year)
+                    ->select(
+                        DB::raw('DAY(created_at) as label'), 
+                        DB::raw('SUM(grand_total) as total')
+                    )
+                    ->groupBy('label')
+                    ->get();
+
+                for ($i = 1; $i <= $daysInMonth; $i++) {
+                    $found = $data->firstWhere('label', $i);
+                    $chartData[] = [
+                        'name' => (string)$i,
+                        'total' => $found ? (int)$found->total : 0
+                    ];
+                }
+                break;
+        }
+
         return Inertia::render('Seller/Dashboard', [
             'store' => $store,
             'stats' => [
                 'total_products' => $totalProducts,
                 'pending_orders' => $pendingOrders,
                 'total_sales' => number_format($totalSales, 0, ',', '.'),
-            ]
+            ],
+            'chartData' => $chartData,
+            'currentFilter' => $period,
         ]);
     }
 
@@ -88,7 +185,7 @@ class SellerController extends Controller
                 'city' => $request->city,
                 'postal_code' => $request->postal_code,
                 'about' => $request->about,
-                'logo' => 'default.png', // <-- PERBAIKAN: Isi default logo biar gak error 1364
+                'logo' => 'default.png',
                 'is_verified' => false,
             ]);
 
@@ -142,7 +239,7 @@ class SellerController extends Controller
 
         if (!$store->exists) {
             $store->is_verified = false;
-            $store->logo = 'default.png'; // Jaga-jaga kalau update pertama kali
+            $store->logo = 'default.png'; 
         }
 
         $store->save();

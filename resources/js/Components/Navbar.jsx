@@ -1,12 +1,13 @@
 import { Link, usePage } from "@inertiajs/react";
 import { useState } from "react";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, User, LogOut } from "lucide-react";
 
 export default function Navbar() {
     const { auth } = usePage().props;
     const user = auth.user;
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isMobileCategoryOpen, setIsMobileCategoryOpen] = useState(false);
+    const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
 
     const categories = [
         { name: "All Category", slug: "/" },
@@ -197,22 +198,68 @@ export default function Navbar() {
 
                         <div className="flex items-center">
                             {user ? (
-                                <div className="flex items-center ml-2 gap-3 pl-6 border-l border-white/10">
-                                    <div className="h-10 w-10 rounded-full bg-[#3E2723] border-2 border-white flex items-center justify-center text-white font-bold font-poppins shadow-md">
-                                        {user.name.charAt(0).toUpperCase()}
-                                    </div>
-                                    <div className="flex flex-col items-start leading-tight">
-                                        <span className="text-white font-bold text-sm truncate max-w-[150px]">
-                                            {user.name}
-                                        </span>
-                                        <Link
-                                            href={route("logout")}
-                                            method="post"
-                                            as="button"
-                                            className="text-[11px] text-[#93FF00] hover:text-white transition font-medium uppercase tracking-wide"
+                                <div className="flex items-center ml-2 gap-4 pl-6 border-l border-white/10">
+                                    <div className="relative">
+                                        <button
+                                            onClick={() =>
+                                                setIsProfileDropdownOpen(
+                                                    !isProfileDropdownOpen
+                                                )
+                                            }
+                                            className="flex items-center gap-3 focus:outline-none group"
                                         >
-                                            Sign Out
-                                        </Link>
+                                            <div className="h-10 w-10 rounded-full bg-[#3E2723] border-2 border-white flex items-center justify-center text-white font-bold font-poppins shadow-md group-hover:border-[#93FF00] transition-colors">
+                                                {user.name
+                                                    .charAt(0)
+                                                    .toUpperCase()}
+                                            </div>
+                                            <div className="hidden lg:flex flex-col items-start leading-tight">
+                                                <span className="text-white font-bold text-sm truncate max-w-[150px] group-hover:text-[#93FF00] transition-colors">
+                                                    {user.name}
+                                                </span>
+                                                <span className="text-[10px] text-gray-400 uppercase tracking-wider">
+                                                    {user.role}
+                                                </span>
+                                            </div>
+                                            <ChevronDown
+                                                className={`w-4 h-4 text-white transition-transform ${
+                                                    isProfileDropdownOpen
+                                                        ? "rotate-180"
+                                                        : ""
+                                                }`}
+                                            />
+                                        </button>
+
+                                        {isProfileDropdownOpen && (
+                                            <div className="absolute right-0 top-full mt-3 w-56 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden py-1 z-50 transform origin-top-right transition-all">
+                                                <div className="px-4 py-3 border-b border-gray-50 bg-gray-50/50">
+                                                    <p className="text-sm font-bold text-[#173B1A] truncate">
+                                                        {user.name}
+                                                    </p>
+                                                    <p className="text-xs text-gray-500 truncate">
+                                                        {user.email}
+                                                    </p>
+                                                </div>
+
+                                                <Link
+                                                    href={route("profile.edit")}
+                                                    className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-green-50 hover:text-[#173B1A] transition-colors"
+                                                >
+                                                    <User className="w-4 h-4" />
+                                                    Edit Profile
+                                                </Link>
+
+                                                <Link
+                                                    href={route("logout")}
+                                                    method="post"
+                                                    as="button"
+                                                    className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors text-left"
+                                                >
+                                                    <LogOut className="w-4 h-4" />
+                                                    Sign Out
+                                                </Link>
+                                            </div>
+                                        )}
                                     </div>
 
                                     {auth.cart_count > 0 && (
@@ -368,23 +415,35 @@ export default function Navbar() {
                                     <div className="h-10 w-10 rounded-full bg-[#3E2723] flex items-center justify-center text-white font-bold">
                                         {user.name.charAt(0).toUpperCase()}
                                     </div>
-                                    <div>
-                                        <p className="text-white font-bold">
+                                    <div className="overflow-hidden">
+                                        <p className="text-white font-bold truncate">
                                             {user.name}
                                         </p>
-                                        <p className="text-xs text-gray-400">
+                                        <p className="text-xs text-gray-400 truncate">
                                             {user.email}
                                         </p>
                                     </div>
                                 </div>
-                                <Link
-                                    href={route("logout")}
-                                    method="post"
-                                    as="button"
-                                    className="w-full text-left text-red-400 py-2 px-2 text-sm font-bold"
-                                >
-                                    Sign Out
-                                </Link>
+
+                                <div className="space-y-2">
+                                    <Link
+                                        href={route("profile.edit")}
+                                        className="flex items-center gap-2 w-full text-left text-white hover:text-[#93FF00] py-2 px-2 text-sm font-medium transition-colors"
+                                    >
+                                        <User className="w-4 h-4" />
+                                        Edit Profile
+                                    </Link>
+
+                                    <Link
+                                        href={route("logout")}
+                                        method="post"
+                                        as="button"
+                                        className="flex items-center gap-2 w-full text-left text-red-400 hover:text-red-300 py-2 px-2 text-sm font-bold transition-colors"
+                                    >
+                                        <LogOut className="w-4 h-4" />
+                                        Sign Out
+                                    </Link>
+                                </div>
                             </div>
                         )}
                     </div>

@@ -12,7 +12,9 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Product::with(['store', 'productImages', 'productCategory']);
+        $query = Product::with(['store', 'productImages', 'productCategory'])
+            ->withAvg('productReviews', 'rating')
+            ->withCount('productReviews');
 
         $categoryName = 'All Products';
         
@@ -77,6 +79,8 @@ class ProductController extends Controller
             ->avg('product_reviews.rating');
 
         $relatedProducts = Product::with(['productImages', 'store'])
+            ->withAvg('productReviews', 'rating')
+            ->withCount('productReviews')
             ->where('product_category_id', $product->product_category_id)
             ->where('id', '!=', $product->id)
             ->inRandomOrder()
@@ -91,7 +95,7 @@ class ProductController extends Controller
             
             if ($buyer) {
                 $hasPurchased = \App\Models\Transaction::where('buyer_id', $buyer->id)
-                    ->where('payment_status', 'paid')
+                ->whereIn('payment_status', ['paid', 'done'])
                     ->whereHas('transactionDetails', function ($q) use ($product) {
                         $q->where('product_id', $product->id);
                     })

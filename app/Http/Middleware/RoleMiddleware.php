@@ -15,9 +15,7 @@ class RoleMiddleware
      */
     public function handle(Request $request, Closure $next, $role): Response
     {
-        // Cek kolom 'role' di tabel user (sesuai gambar ERD lu)
         if (! $request->user() || $request->user()->role !== $role) {
-            // Kalau bukan haknya, tendang ke halaman utama
             return redirect('/');
         }
 

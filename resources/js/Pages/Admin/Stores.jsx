@@ -25,7 +25,6 @@ export default function Stores({ stores, filters }) {
         );
     };
 
-    // --- FUNGSI BARU: APPROVE ---
     const handleApprove = (id, name) => {
         if (confirm(`Verifikasi toko "${name}"?`)) {
             router.patch(
@@ -38,7 +37,6 @@ export default function Stores({ stores, filters }) {
         }
     };
 
-    // --- FUNGSI BARU: REJECT ---
     const handleReject = (id, name) => {
         if (
             confirm(`Tolak pengajuan toko "${name}"? Data toko akan dihapus.`)
