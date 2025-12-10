@@ -1,22 +1,31 @@
 import { Link, usePage } from "@inertiajs/react";
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 
 export default function Navbar() {
     const { auth } = usePage().props;
     const user = auth.user;
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isMobileCategoryOpen, setIsMobileCategoryOpen] = useState(false);
+
+    const categories = [
+        { name: "All Category", slug: "/" },
+        { name: "Fresh Fruit", slug: "fresh-fruit" },
+        { name: "Vegetables", slug: "vegetables" },
+        { name: "Fresh Meat", slug: "fresh-meat" },
+        { name: "Healthy Drink", slug: "health-drink" },
+    ];
 
     const menus = {
         guest: [
             { label: "HOME", href: "/", type: "link" },
-            { label: "CATEGORY", href: "/#category", type: "scroll" },
-            { label: "PRODUCT", href: "/#product", type: "scroll" },
+            { label: "ABOUT US", href: "/#about", type: "scroll" },
+            { label: "CATEGORY", type: "dropdown" },
         ],
         member: [
             { label: "HOME", href: "/", type: "link" },
-            { label: "CATEGORY", href: "/#category", type: "scroll" },
-            { label: "PRODUCT", href: "/#product", type: "scroll" },
+            { label: "ABOUT US", href: "/#about", type: "scroll" },
+            { label: "CATEGORY", type: "dropdown" },
             {
                 label: "MY ORDER",
                 href: route("my-order"),
@@ -112,6 +121,40 @@ export default function Navbar() {
                     <div className="hidden md:flex items-center gap-8">
                         <div className="flex space-x-8">
                             {currentMenus.map((item, index) => {
+                                if (item.type === "dropdown") {
+                                    return (
+                                        <div
+                                            key={index}
+                                            className="relative group h-full flex items-center"
+                                        >
+                                            <button className="text-white group-hover:text-[#93FF00] px-1 pt-1 text-sm font-medium tracking-wider transition-colors duration-200 uppercase flex items-center gap-1 focus:outline-none">
+                                                {item.label}
+                                                <ChevronDown className="w-4 h-4 transition-transform group-hover:rotate-180" />
+                                            </button>
+
+                                            <div className="absolute top-[30px] left-0 w-48 bg-white rounded-xl shadow-xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0 overflow-hidden">
+                                                <div className="py-2">
+                                                    {categories.map((cat) => (
+                                                        <Link
+                                                            key={cat.slug}
+                                                            href={route(
+                                                                "products.list",
+                                                                {
+                                                                    category:
+                                                                        cat.slug,
+                                                                }
+                                                            )}
+                                                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-[#173B1A] transition-colors"
+                                                        >
+                                                            {cat.name}
+                                                        </Link>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                }
+
                                 const isActive =
                                     item.type === "page" &&
                                     item.active &&
@@ -236,8 +279,54 @@ export default function Navbar() {
             {isMobileMenuOpen && (
                 <div className="md:hidden bg-[#1A1A1A] border-t border-[#2C5E31] py-4">
                     <div className="space-y-1 px-4">
-                        {currentMenus.map((item, index) =>
-                            item.type === "scroll" ? (
+                        {currentMenus.map((item, index) => {
+                            if (item.type === "dropdown") {
+                                return (
+                                    <div
+                                        key={index}
+                                        className="border-b border-white/5"
+                                    >
+                                        <button
+                                            onClick={() =>
+                                                setIsMobileCategoryOpen(
+                                                    !isMobileCategoryOpen
+                                                )
+                                            }
+                                            className="w-full flex justify-between items-center text-white hover:text-[#93FF00] py-3 font-medium uppercase text-sm"
+                                        >
+                                            {item.label}
+                                            <ChevronDown
+                                                className={`w-4 h-4 transition-transform ${
+                                                    isMobileCategoryOpen
+                                                        ? "rotate-180"
+                                                        : ""
+                                                }`}
+                                            />
+                                        </button>
+                                        {isMobileCategoryOpen && (
+                                            <div className="pl-4 pb-2 space-y-1 bg-[#173B1A]/30 rounded-lg mb-2">
+                                                {categories.map((cat) => (
+                                                    <Link
+                                                        key={cat.slug}
+                                                        href={route(
+                                                            "products.list",
+                                                            {
+                                                                category:
+                                                                    cat.slug,
+                                                            }
+                                                        )}
+                                                        className="block text-gray-300 hover:text-[#93FF00] py-2 text-sm"
+                                                    >
+                                                        {cat.name}
+                                                    </Link>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            }
+
+                            return item.type === "scroll" ? (
                                 <a
                                     key={index}
                                     href={item.href}
@@ -253,8 +342,8 @@ export default function Navbar() {
                                 >
                                     {item.label}
                                 </Link>
-                            )
-                        )}
+                            );
+                        })}
 
                         {!user && (
                             <div className="mt-6 flex flex-col gap-3">

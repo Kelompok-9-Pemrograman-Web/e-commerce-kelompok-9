@@ -55,6 +55,11 @@ class CartController extends Controller
             return back()->withErrors(['qty' => 'Stok tidak mencukupi.']);
         }
 
+        $user = Auth::user();
+        if ($user && $user->store && $product->store_id === $user->store->id) {
+            return back()->withErrors(['qty' => 'Anda tidak dapat membeli produk dari toko Anda sendiri.']);
+        }
+
         $cart = session()->get('cart', []);
 
         if (isset($cart[$id])) {

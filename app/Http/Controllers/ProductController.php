@@ -30,6 +30,11 @@ class ProductController extends Controller
             $query->where('name', 'like', '%' . $request->search . '%');
         }
 
+        $user = Auth::user();
+        if ($user && $user->store) {
+            $query->where('store_id', '!=', $user->store->id);
+        }
+
         $products = $query->latest()->paginate(12)->withQueryString();
 
         return Inertia::render('Products/Index', [
