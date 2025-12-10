@@ -246,14 +246,25 @@ export default function Index({ orders, filters }) {
                                                 </span>
                                             )}
                                         </td>
-                                        <td className="px-6 py-4 text-center align-top">
+                                        <td className="px-6 py-4 text-center align-top space-y-2">
                                             {order.payment_status ===
-                                                "paid" && (
+                                                "unpaid" &&
+                                                order.address_id !== "cod" && (
+                                                    <span
+                                                        className="inline-block px-3 py-1.5 bg-yellow-100 text-yellow-700 rounded-lg text-xs font-bold border border-yellow-200 cursor-help"
+                                                        title="Menunggu Admin memverifikasi pembayaran pembeli"
+                                                    >
+                                                        Menunggu Admin
+                                                    </span>
+                                                )}
+
+                                            {(order.payment_status === "paid" ||
+                                                order.address_id === "cod") && (
                                                 <button
                                                     onClick={() =>
                                                         openResiModal(order)
                                                     }
-                                                    className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#1A1A1A] text-white rounded-lg hover:bg-gray-800 transition text-xs font-bold shadow-sm"
+                                                    className="inline-flex items-center justify-center gap-1 w-full px-3 py-1.5 bg-[#1A1A1A] text-white rounded-lg hover:bg-gray-800 transition text-xs font-bold shadow-sm"
                                                 >
                                                     <Truck className="w-3 h-3" />
                                                     {order.tracking_number
