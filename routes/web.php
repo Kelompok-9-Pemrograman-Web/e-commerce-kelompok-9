@@ -12,6 +12,7 @@ use App\Http\Controllers\SellerOrderController;
 use App\Http\Controllers\SellerProductController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\MyOrderController;
+use App\Http\Controllers\StoreController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -19,6 +20,7 @@ use Inertia\Inertia;
 Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
 Route::get('/products', [ProductController::class, 'index'])->name('products.list');
 Route::get('/product/{slug}', [ProductController::class, 'show'])->name('product.detail');
+Route::get('/store/{name}', [StoreController::class, 'show'])->name('store.show');
 
 Route::middleware('auth')->group(function () {
     

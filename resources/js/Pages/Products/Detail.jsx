@@ -12,6 +12,7 @@ import {
     ChevronRight,
     Store,
     MapPin,
+    ImageIcon,
 } from "lucide-react";
 
 export default function Detail({
@@ -79,7 +80,7 @@ export default function Detail({
     const submitReview = (e) => {
         e.preventDefault();
         post(route("reviews.store"), {
-            onSuccess: () => reset(),
+            onSuccess: () => router.reload({ only: ['product'] }),
             preserveScroll: true,
         });
     };
@@ -126,25 +127,13 @@ export default function Detail({
                             {images.length > 1 && (
                                 <>
                                     <button
-                                        onClick={() =>
-                                            setCurrentImageIndex((p) =>
-                                                p === 0
-                                                    ? images.length - 1
-                                                    : p - 1
-                                            )
-                                        }
+                                        onClick={handlePrevImage}
                                         className="absolute left-4 p-2 rounded-full bg-white shadow-md hover:bg-[#00B207] hover:text-white transition opacity-0 group-hover:opacity-100"
                                     >
                                         <ChevronLeft className="w-6 h-6" />
                                     </button>
                                     <button
-                                        onClick={() =>
-                                            setCurrentImageIndex((p) =>
-                                                p === images.length - 1
-                                                    ? 0
-                                                    : p + 1
-                                            )
-                                        }
+                                        onClick={handleNextImage}
                                         className="absolute right-4 p-2 rounded-full bg-white shadow-md hover:bg-[#00B207] hover:text-white transition opacity-0 group-hover:opacity-100"
                                     >
                                         <ChevronRight className="w-6 h-6" />
@@ -322,9 +311,12 @@ export default function Detail({
                                 {product.store.city}
                             </div>
 
-                            <button className="w-full py-2 border border-[#00B207] text-[#00B207] rounded-full font-bold text-sm hover:bg-[#00B207] hover:text-white transition">
+                            <Link
+                                href={route("store.show", product.store.name)}
+                                className="text-center w-full py-2 border border-[#00B207] text-[#00B207] rounded-full font-bold text-sm hover:bg-[#00B207] hover:text-white transition block"
+                            >
                                 Visit Store
-                            </button>
+                            </Link>
                         </div>
                     </div>
 
