@@ -2,9 +2,9 @@ import React from "react";
 import SellerLayout from "@/Layouts/SellerLayout";
 import { Head, Link } from "@inertiajs/react";
 import { Package, ShoppingBag, DollarSign, AlertTriangle } from "lucide-react";
+import SalesChart from "./SalesChart";
 
-export default function Dashboard({ store, stats }) {
-    // Kalau belum punya toko, tampilkan pesan suruh buat toko
+export default function Dashboard({ store, stats, chartData, currentFilter }) {
     if (!store) {
         return (
             <SellerLayout title="Dashboard Seller">
@@ -32,12 +32,10 @@ export default function Dashboard({ store, stats }) {
         );
     }
 
-    // Kalau sudah punya toko
     return (
         <SellerLayout title="Dashboard Seller">
             <Head title="Seller Dashboard" />
 
-            {/* Alert Status Verifikasi */}
             {!store.is_verified && (
                 <div className="bg-orange-50 border-l-4 border-orange-500 p-4 mb-8 rounded-r-lg">
                     <div className="flex">
@@ -58,7 +56,6 @@ export default function Dashboard({ store, stats }) {
                 </div>
             )}
 
-            {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
                     <div className="p-3 bg-blue-100 text-blue-600 rounded-lg">
@@ -67,7 +64,7 @@ export default function Dashboard({ store, stats }) {
                     <div>
                         <p className="text-sm text-gray-500">Total Produk</p>
                         <h3 className="text-2xl font-bold text-gray-900">
-                            {stats.total_products}
+                            {stats?.total_products || 0}
                         </h3>
                     </div>
                 </div>
@@ -78,7 +75,7 @@ export default function Dashboard({ store, stats }) {
                     <div>
                         <p className="text-sm text-gray-500">Pesanan Baru</p>
                         <h3 className="text-2xl font-bold text-gray-900">
-                            {stats.pending_orders}
+                            {stats?.pending_orders || 0}
                         </h3>
                     </div>
                 </div>
@@ -89,16 +86,21 @@ export default function Dashboard({ store, stats }) {
                     <div>
                         <p className="text-sm text-gray-500">Total Penjualan</p>
                         <h3 className="text-2xl font-bold text-gray-900">
-                            Rp {stats.total_sales}
+                            Rp {stats?.total_sales || 0}
                         </h3>
                     </div>
                 </div>
             </div>
 
-            {/* Placeholder Content */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center text-gray-400">
-                <p>Grafik penjualan akan muncul di sini nanti.</p>
-            </div>
+            {store.is_verified ? (
+                <SalesChart data={chartData} currentFilter={currentFilter} />
+            ) : (
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center text-gray-400">
+                    <p>
+                        Grafik penjualan akan aktif setelah toko diverifikasi.
+                    </p>
+                </div>
+            )}
         </SellerLayout>
     );
 }

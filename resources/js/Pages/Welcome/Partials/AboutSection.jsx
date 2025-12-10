@@ -110,13 +110,14 @@ export default function AboutSection() {
                         </div>
 
                         <div className="pt-4">
-                            <a
-                                href="#product"
+                            {/* UPDATE: Mengarah ke route products.list */}
+                            <Link
+                                href={route("products.list")}
                                 className="inline-flex items-center justify-center px-8 py-4 text-base font-bold text-[#173B1A] transition-all duration-200 bg-[#93FF00] border border-transparent rounded-full hover:bg-[#173B1A] hover:text-[#93FF00] shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                             >
                                 Belanja Sekarang{" "}
                                 <ArrowRight className="ml-2 w-5 h-5" />
-                            </a>
+                            </Link>
                         </div>
                     </div>
                 </div>
