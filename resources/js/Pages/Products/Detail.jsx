@@ -69,7 +69,11 @@ export default function Detail({
 
     const handleBuy = () => {
         if (!auth.user) return router.visit(route("login"));
-        router.post(route("login"), { product_id: product.id, qty: quantity });
+
+        router.post(route("cart.store"), {
+            product_id: product.id,
+            qty: quantity,
+        });
     };
 
     const submitReview = (e) => {
@@ -122,14 +126,26 @@ export default function Detail({
                             {images.length > 1 && (
                                 <>
                                     <button
-                                        onClick={handlePrevImage}
-                                        className="absolute left-4 p-2 rounded-full bg-white shadow-md text-[#1A1A1A] hover:bg-[#00B207] hover:text-white transition opacity-0 group-hover:opacity-100"
+                                        onClick={() =>
+                                            setCurrentImageIndex((p) =>
+                                                p === 0
+                                                    ? images.length - 1
+                                                    : p - 1
+                                            )
+                                        }
+                                        className="absolute left-4 p-2 rounded-full bg-white shadow-md hover:bg-[#00B207] hover:text-white transition opacity-0 group-hover:opacity-100"
                                     >
                                         <ChevronLeft className="w-6 h-6" />
                                     </button>
                                     <button
-                                        onClick={handleNextImage}
-                                        className="absolute right-4 p-2 rounded-full bg-white shadow-md text-[#1A1A1A] hover:bg-[#00B207] hover:text-white transition opacity-0 group-hover:opacity-100"
+                                        onClick={() =>
+                                            setCurrentImageIndex((p) =>
+                                                p === images.length - 1
+                                                    ? 0
+                                                    : p + 1
+                                            )
+                                        }
+                                        className="absolute right-4 p-2 rounded-full bg-white shadow-md hover:bg-[#00B207] hover:text-white transition opacity-0 group-hover:opacity-100"
                                     >
                                         <ChevronRight className="w-6 h-6" />
                                     </button>

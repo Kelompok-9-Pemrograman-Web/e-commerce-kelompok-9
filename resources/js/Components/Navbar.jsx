@@ -58,6 +58,12 @@ export default function Navbar() {
                 active: "admin.dashboard",
             },
             {
+                label: "TRANSAKSI",
+                href: route("admin.transactions"),
+                type: "page",
+                active: "admin.transactions",
+            },
+            {
                 label: "VERIFIKASI",
                 href: route("admin.stores"),
                 type: "page",
@@ -77,12 +83,9 @@ export default function Navbar() {
     if (user) {
         let roleKey = user.role;
 
-        // --- LOGIKA BARU DISINI ---
-        // Jika Seller TAPI belum Verified -> Anggap sebagai Member (biar bisa belanja)
         if (roleKey === "seller" && !user.store_verified) {
             roleKey = "member";
         }
-        // Jika user biasa (kadang database tulis 'user' bukan 'member') -> mapping ke 'member'
         if (roleKey === "user") {
             roleKey = "member";
         }
@@ -96,7 +99,6 @@ export default function Navbar() {
         <nav className="bg-[#173B1A] sticky top-0 z-50 shadow-md font-sans border-b border-[#2C5E31]">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between h-20 items-center">
-                    {/* LOGO */}
                     <div className="flex-shrink-0 flex items-center">
                         <Link
                             href="/"
@@ -107,9 +109,7 @@ export default function Navbar() {
                         </Link>
                     </div>
 
-                    {/* GROUP KANAN: MENU + PROFILE */}
                     <div className="hidden md:flex items-center gap-8">
-                        {/* MENU ITEMS */}
                         <div className="flex space-x-8">
                             {currentMenus.map((item, index) => {
                                 const isActive =
@@ -152,7 +152,6 @@ export default function Navbar() {
                             })}
                         </div>
 
-                        {/* PROFILE VIEWER */}
                         <div className="flex items-center">
                             {user ? (
                                 <div className="flex items-center ml-2 gap-3 pl-6 border-l border-white/10">
@@ -172,6 +171,31 @@ export default function Navbar() {
                                             Sign Out
                                         </Link>
                                     </div>
+
+                                    {auth.cart_count > 0 && (
+                                        <Link
+                                            href={route("cart.index")}
+                                            className="relative ml-2 text-white hover:text-[#93FF00] transition"
+                                        >
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                className="h-6 w-6"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth={2}
+                                                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                                                />
+                                            </svg>
+                                            <span className="absolute -top-1 -right-2 bg-red-500 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold">
+                                                {auth.cart_count}
+                                            </span>
+                                        </Link>
+                                    )}
                                 </div>
                             ) : (
                                 <div className="flex items-center gap-4 ml-4">
@@ -192,7 +216,6 @@ export default function Navbar() {
                         </div>
                     </div>
 
-                    {/* Mobile Menu Button */}
                     <div className="-mr-2 flex items-center md:hidden">
                         <button
                             onClick={() =>
@@ -210,7 +233,6 @@ export default function Navbar() {
                 </div>
             </div>
 
-            {/* Mobile Menu Dropdown */}
             {isMobileMenuOpen && (
                 <div className="md:hidden bg-[#1A1A1A] border-t border-[#2C5E31] py-4">
                     <div className="space-y-1 px-4">

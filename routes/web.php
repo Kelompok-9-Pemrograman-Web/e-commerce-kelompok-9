@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdminTransactionController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductReviewController;
 use App\Http\Controllers\ProfileController;
@@ -8,6 +11,7 @@ use App\Http\Controllers\SellerController;
 use App\Http\Controllers\SellerOrderController;
 use App\Http\Controllers\SellerProductController;
 use App\Http\Controllers\WelcomeController;
+use App\Http\Controllers\MyOrderController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -26,11 +30,20 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart', [CartController::class, 'store'])->name('cart.store');
+    Route::patch('/cart/{id}', [CartController::class, 'update'])->name('cart.update');
+    Route::delete('/cart/{id}', [CartController::class, 'destroy'])->name('cart.destroy');
+
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+    Route::get('/checkout/success/{code}', [CheckoutController::class, 'success'])->name('checkout.success');
+
     Route::post('/reviews', [ProductReviewController::class, 'store'])->name('reviews.store');
 
-    Route::get('/my-order', function () {
-        return "Halaman My Order (Belum dibuat)";
-    })->name('my-order');
+    Route::get('/my-order', [MyOrderController::class, 'index'])->name('my-order');
+    Route::get('/my-order/{code}', [MyOrderController::class, 'show'])->name('my-order.detail');
+    Route::post('/my-order/{code}/complete', [MyOrderController::class, 'complete'])->name('my-order.complete');
 
     Route::get('/join-seller', [SellerController::class, 'showJoinPage'])->name('join-seller');
     Route::post('/join-seller', [SellerController::class, 'registerStore'])->name('join-seller.store');
@@ -59,6 +72,9 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
         
+        Route::get('/transactions', [AdminTransactionController::class, 'index'])->name('transactions');
+        Route::patch('/transactions/{id}/confirm', [AdminTransactionController::class, 'confirm'])->name('transactions.confirm');
+
         Route::get('/stores', [AdminController::class, 'stores'])->name('stores');
         Route::patch('/stores/{id}/approve', [AdminController::class, 'approveStore'])->name('stores.approve');
         Route::delete('/stores/{id}/reject', [AdminController::class, 'rejectStore'])->name('stores.reject');
